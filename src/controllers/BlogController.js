@@ -13,7 +13,8 @@ module.exports = {
         _id: 1,
         title: 1,
         name: 1,
-        createdAt: 1
+        createdAt: 1,
+        description: 1
       }
     );
 
@@ -26,6 +27,7 @@ module.exports = {
       _id: 1,
       title: 1,
       name: 1,
+      description: 1,
       posts: 1
     }).populate({
       path: "posts",
@@ -46,7 +48,7 @@ module.exports = {
    * @param  res
    */
   async store(req, res) {
-    const { title, email, password, name } = req.body;
+    const { title, email, password, name, description } = req.body;
 
     const emailExist = await Blog.findOne({
       email
@@ -62,7 +64,8 @@ module.exports = {
       title,
       email,
       password,
-      name
+      name,
+      description
     });
 
     return res.status(200).json(blog);
