@@ -4,16 +4,12 @@ const BlogSchema = new Schema(
   {
     title: { type: String, required: true },
     description: { type: String },
-    email: {
-      type: String,
-      required: true
-    },
-    password: {
-      type: String,
-      required: true
-    },
     name: {
       type: String,
+      required: true
+    },
+    iduser: {
+      type: Schema.Types.ObjectId,
       required: true
     },
     posts: [

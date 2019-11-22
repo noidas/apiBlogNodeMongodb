@@ -1,4 +1,5 @@
 const Blog = require("../models/Blog");
+const User = require("../models/User");
 
 module.exports = {
   /**
@@ -12,11 +13,45 @@ module.exports = {
       {
         _id: 1,
         title: 1,
+        edescription: 1,
         name: 1,
-        createdAt: 1,
-        description: 1
+        iduser: 1,
+        createdAt: 1
       }
     );
+    // const blogs = await User.aggregate([
+    //   {
+    //     $lookup: {
+    //       from: "blogs",
+    //       localField: "blogs",
+    //       foreignField: "_id",
+    //       as: "userdata"
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       name: 1,
+    //       userdata: 1
+    //     }
+    //   }
+    // ]);
+
+    // var listagem = [];
+    // blogs.map(blog => {
+    //   const { userdata } = blog;
+
+    //   userdata.map(p => {
+    //     listagem.push({
+    //       iduser: blog._id,
+    //       name: blog.name,
+    //       id: p._id,
+    //       title: p.title,
+    //       description: p.description,
+    //       updatedAt: p.updatedAt
+    //     });
+    //   });
+    // });
 
     return res.status(200).json(blogs);
   },
@@ -26,8 +61,9 @@ module.exports = {
     const blog = await Blog.findById(id, {
       _id: 1,
       title: 1,
-      name: 1,
       description: 1,
+      name: 1,
+      iduser: 1,
       posts: 1
     }).populate({
       path: "posts",
@@ -48,25 +84,20 @@ module.exports = {
    * @param  res
    */
   async store(req, res) {
-    const { title, email, password, name, description } = req.body;
+    const idUser = req.params.id;
+    const { title, description, name, iduser } = req.body;
 
-    const emailExist = await Blog.findOne({
-      email
-    });
-
-    if (emailExist) {
-      return res.status(400).json({
-        message: "E-mail já está cadastrado"
-      });
-    }
+    const user = await User.findById(idUser);
 
     const blog = await Blog.create({
       title,
-      email,
-      password,
+      description,
       name,
-      description
+      iduser
     });
+
+    user.blogs.push(blog);
+    user.save();
 
     return res.status(200).json(blog);
   }
