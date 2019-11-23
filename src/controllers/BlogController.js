@@ -8,49 +8,84 @@ module.exports = {
    * @param res
    */
   async index(req, res) {
-    const blogs = await Blog.find(
-      {},
-      {
-        _id: 1,
-        title: 1,
-        edescription: 1,
-        name: 1,
-        iduser: 1,
-        createdAt: 1
-      }
-    );
-    // const blogs = await User.aggregate([
+    // const blogs = await Blog.find(
+    //   {},
     //   {
-    //     $lookup: {
-    //       from: "blogs",
-    //       localField: "blogs",
-    //       foreignField: "_id",
-    //       as: "userdata"
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       name: 1,
-    //       userdata: 1
-    //     }
+    //     _id: 1,
+    //     title: 1,
+    //     edescription: 1,
+    //     name: 1,
+    //     iduser: 1,
+    //     createdAt: 1
     //   }
-    // ]);
+    // );
+
+    const blogs = await Blog.aggregate([
+      {
+        $lookup: {
+          from: "posts",
+          localField: "posts",
+          foreignField: "_id",
+          as: "postsdata"
+        }
+      },
+      {
+        $sort: {
+          "postsdata.updatedAt": -1
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          name: 1,
+          iduser: 1,
+          createdAt: 1
+        }
+      }
+      // {
+      //   $lookup: {
+      //     from: "posts",
+      //     localField: "posts",
+      //     foreignField: "_id",
+      //     as: "postsdata"
+      //   }
+      // },
+      // {
+      //   $unwind: { path: "$postsdata" }
+      // },
+      // {
+      //   $group: {
+      //     _id: {
+      //       _id: "$_id",
+      //       name: "$name",
+      //       title: "$title",
+      //       iduser: "$iduser",
+      //       createdAt: "$createdAt"
+      //     }
+      //   }
+      // },
+      // {
+      //   $sort: {
+      //     "postsdata.updatedAt": -1
+      //   }
+      // },
+      // {
+      //   $project: {
+      //     _id: 1,
+      //     title: 1,
+      //     name: 1,
+      //     iduser: 1,
+      //     createdAt: 1
+      //   }
+      // }
+    ]);
 
     // var listagem = [];
     // blogs.map(blog => {
-    //   const { userdata } = blog;
+    //   const { _id } = blog;
 
-    //   userdata.map(p => {
-    //     listagem.push({
-    //       iduser: blog._id,
-    //       name: blog.name,
-    //       id: p._id,
-    //       title: p.title,
-    //       description: p.description,
-    //       updatedAt: p.updatedAt
-    //     });
-    //   });
+    //   listagem.push(_id);
     // });
 
     return res.status(200).json(blogs);
