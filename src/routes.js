@@ -6,6 +6,12 @@ const AutenticacaoController = require("./controllers/AutenticacaoController");
 const PostController = require("./controllers/PostController");
 const UserController = require("./controllers/UserController");
 const PostagemController = require("./controllers/PostagemController");
+const MarkerController = require("./controllers/MarkersController");
+
+/* Rotas para o marker */
+routes.get("/markers", MarkerController.index);
+routes.post("/marker", MarkerController.store);
+routes.delete("/marker/:id", MarkerController.delete);
 
 routes.get("/blog", BlogController.index);
 routes.get("/blog/:id", BlogController.show);
